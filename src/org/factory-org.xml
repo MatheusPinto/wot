@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="https://moise-lang.github.io/xml/os.xsl" type="text/xsl" ?>
+<organisational-specification
+    id="factory"
+    os-version="1.1"
+
+    xmlns='http://moise.sourceforge.net/os'
+    xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+    xsi:schemaLocation='http://moise.sourceforge.net/os
+                        https://moise-lang.github.io/xml/os.xsd' >
+
+<structural-specification>
+
+<group-specification id="factoryGroup">
+ <roles>
+  <role id="factory_manager"  min="1" max="1"/>
+  <role id="operator"  min="1" max="1"/>
+<!-- 
+  <role id="operator_wksFiller"  min="1" max="1"/>
+  <role id="operator_robotArm"  min="1" max="1"/>
+  <role id="operator_packager"  min="1" max="1"/> -->
+ </roles>
+</group-specification>
+</structural-specification>
+
+<functional-specification>
+ <scheme id="yogurt_production">
+   <goal id="make_yogurt_cup">
+     <argument id="cupsNumber" />
+     <plan operator="sequence">
+       <goal id="startProduction" />
+       <goal id="startWorkshop" ttf="10 seconds"/>
+       <goal id="finishProduction" ttf="1 hour" />
+     </plan>
+   </goal>
+   <mission id="mfactory_manager" min="1" max="1">
+     <goal id="startProduction" />
+     <goal id="finishProduction" />
+   </mission>
+   <mission id="mOperator" min="1" max="1" >
+     <goal id="startWorkshop" />
+   </mission>
+ </scheme>
+</functional-specification>
+
+<normative-specification>
+  <norm id="n1"  type="permission"   role="factory_manager"   mission="mfactory_manager" />
+  <norm id="n2"  type="obligation"   role="operator"  mission="mOperator" />
+</normative-specification>
+
+</organisational-specification>

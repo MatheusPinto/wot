@@ -38,8 +38,15 @@ debugMode("on").
     .
 
 // Lançado erro ao tentar chamar esse objetivo
-+!moveToPickCup <-
-    !invokeAction("tag:robotArm", moveTo, [2.2, 0, 1]) ;
++!moveToPickCup <-  
+    //!invokeAction("tag:robotArm", moveTo, ""x":2,"y":0,"z":2") ;
+    //!invokeAction("tag:robotArm", moveTo, "x:2.2") ;
+    //!invokeAction("tag:robotArm", moveTo, "y:0") ;
+    //!invokeAction("tag:robotArm", moveTo, "z:1") ;
+    //!invokeAction("tag:robotArm", moveTo, [2.2, 0, 1]) ;
+    DEVOLVER = [kv("x", 2.2), kv("y", 0), kv("z", 1)];
+
+    !invokeAction("tag:robotArm", moveTo, DEVOLVER) ;
     .
 
 // Lançado erro ao tentar chamar esse objetivo
