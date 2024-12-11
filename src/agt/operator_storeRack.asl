@@ -6,7 +6,7 @@ actualCapacity([0,0]).
 actualRobotXPosition(0).
 actualRobotZPosition(0).
 actualRobotClampStatus("false").
-desirableConveyorSpeed(0.3).
+desirableConveyorSpeed(1).
 actualRackPosition([0, 0]).
 rackIsEmpty(false).
 
@@ -23,14 +23,9 @@ debugMode("off").
     .at("now + 300 mseconds", {+!getRobotClampStatus});
     .
 
-// fazer uma operação de falha, caso não seja possivel pegar o TD
-//+!start <-
-
-
 +cupsToProduce(CN) <- 
     ?desirableConveyorSpeed(S);
     !setConveyorSpeed(S) ;
-    //!pickNextCup;
     .
 
 +!getConveyorSpeed <-
@@ -67,21 +62,14 @@ debugMode("off").
     .
 
 +rackIsEmpty <-
-    .print("Rack is Empty");
+    ?rackIsEmpty(ER);
+    if(ER == true) {
+        .print("Rack is Empty");
+    }
+    else {
+        .print("Rack is Full");
+    }
     .
-
-/*
-+!startWorkshop(scheme(Sch)) <-
-    !getTD("http://simulator:8080/storageRack") ;
-    //.at("now + 5 seconds", {+!getStatusLight});
-    //.at("now + 5 seconds", {+!getCapacity});
-    //.at("now + 5 seconds", {+!getRobotXPosition});
-    //.at("now + 5 seconds", {+!getRobotZPosition});
-    //.at("now + 5 seconds", {+!getRobotClampStatus});
-    ?desirableConveyorSpeed(S);
-    !setConveyorSpeed(S) ;
-    .
-*/
 
 +!setConveyorSpeed(S) <-
     !writeProperty("tag:storageRack", conveyorSpeed, S) ;

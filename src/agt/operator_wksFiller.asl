@@ -7,7 +7,8 @@ actualMagneticValveStatus("false").
 actualOpticalSensorStatus("false").
 actualTankLevel(0).
 actualTankXPosition(0).
-desirableConveyorSpeed(0.3).
+actualProducedCups(0).
+desirableConveyorSpeed(1).
 tankPositionError(0.3).
 tankEmptyLevelError(0.2).
 
@@ -26,24 +27,43 @@ debugMode("on").
     .at("now + 5 seconds", {+!getTankXPosition});
     .
 
-// fazer uma operação de falha, caso não seja possivel pegar o TD
-//+!start <-
-
-
 +cupsToProduce(CN) <- 
     ?desirableConveyorSpeed(S);
     !setConveyorSpeed(S) ;
     !askForCup;
     .
+   
 
++!waitForCups <-
+    
+    .at("now + 1000 mseconds", {+!waitForCups});
+    .
 
 +!askForCup <-
     //?actualTankXPosition(P);
     //?tankPositionError(E);
     //if (P > E) (.at("now + 300 mseconds", {+!askForCup});)
     //else{}
-    .send(operator_storeRack, achieve, pickNextCup);
+    ?actualProducedCups(PC);
+    ?cupsToProduce(CN);
+    if (PC < CN) {
+        .send(operator_storeRack, achieve, pickNextCup);
+        -+actualProducedCups(PC + 1);
+    }
     .
+
+-!askForCup <-
+    ?rackIsEmpty(ER);
+    if(ER == true) {
+        .at("now + 1000 mseconds", {+!askForCup});
+    }
+    .
+
++?rackIsEmpty(ER) <-
+    +rackIsEmpty(ER);
+    .print("\n\n\n\nOperator from Rack NOT responding.\n\n\n\n");
+    .
+
 
 +!askForMoveCup <-
     .send(operator_robotArm, achieve, moveCup);
@@ -82,7 +102,6 @@ debugMode("on").
     !readProperty("tag:fillingWorkshop", conveyorHeadStatus, actualConveyorHeadStatus) ;
     ?actualConveyorHeadStatus(Actual);
     if(Before \== Actual) {
-        //.print("\n\n\n\n\n\n\nACTUAL <- ", Actual, " BEFORE <- ", Before, "\n\n\n\n\n\n\n\n\n");
         !signalConveyorHeadStatusChange(Actual);
     }
     .at("now + 200 mseconds", {+!getConveyorHeadStatus});
