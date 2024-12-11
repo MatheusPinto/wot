@@ -8,7 +8,7 @@ actualOpticalSensorStatus("false").
 actualTankLevel(0).
 actualTankXPosition(0).
 actualProducedCups(0).
-desirableConveyorSpeed(1).
+desirableConveyorSpeed(0.3).
 tankPositionError(0.3).
 tankEmptyLevelError(0.2).
 
@@ -52,7 +52,7 @@ debugMode("on").
     }
     .
 
--!askForCup <-
+-!askForCup <- 
     ?rackIsEmpty(ER);
     if(ER == true) {
         .at("now + 1000 mseconds", {+!askForCup});
@@ -71,6 +71,8 @@ debugMode("on").
     .
 
 +!getConveyorSpeed <-
+    ?actualConveyorSpeed(Before);
+    -actualConveyorSpeed(Before);
     !readProperty("tag:fillingWorkshop", conveyorSpeed, actualConveyorSpeed) ;
     .at("now + 300 mseconds", {+!getConveyorSpeed});
     .
@@ -80,8 +82,8 @@ debugMode("on").
     .
 
 +!getStatusLight <-
-    ?actualStatusLight(Before);
-    -actualStatusLight(Before);
+    // ?actualStatusLight(Before);
+    // -actualStatusLight(Before); tirado por problema de condição de corrida (mecanismo de exclusão mutua?)
     !readProperty("tag:fillingWorkshop", stackLightStatus, actualStatusLight) ;
     ?actualConveyorSpeed(S);
     if(S == 0) {
@@ -124,6 +126,8 @@ debugMode("on").
     .
 
 +!getOpticalSensorStatus <-
+    ?actualOpticalSensorStatus(Before);
+    -actualOpticalSensorStatus(Before);
     !readProperty("tag:fillingWorkshop", opticalSensorStatus, actualOpticalSensorStatus) ;
     .at("now + 300 mseconds", {+!getOpticalSensorStatus});
     .
@@ -141,6 +145,8 @@ debugMode("on").
     .
 
 +!getTankXPosition <-
+    ?actualTankXPosition(Before);
+    -actualTankXPosition(Before);
     !readProperty("tag:fillingWorkshop", positionX, actualTankXPosition) ;
     .at("now + 300 mseconds", {+!getTankXPosition});
     .

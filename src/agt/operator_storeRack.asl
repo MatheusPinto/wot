@@ -6,7 +6,7 @@ actualCapacity([0,0]).
 actualRobotXPosition(0).
 actualRobotZPosition(0).
 actualRobotClampStatus("false").
-desirableConveyorSpeed(1).
+desirableConveyorSpeed(0.3).
 actualRackPosition([0, 0]).
 rackIsEmpty(false).
 
@@ -29,6 +29,8 @@ debugMode("off").
     .
 
 +!getConveyorSpeed <-
+    //?actualConveyorSpeed(Before); tirado por problema de condição de corrida (mecanismo de exclusão mutua?)
+    //-actualConveyorSpeed(Before);
     !readProperty("tag:storageRack", conveyorSpeed, actualConveyorSpeed) ;
     .at("now + 300 mseconds", {+!getConveyorSpeed});
     .
@@ -76,26 +78,36 @@ debugMode("off").
     .
 
 +!getStatusLight <-
+    ?actualStatusLight(Before);
+    -actualStatusLight(Before);
     !readProperty("tag:storageRack", stackLightStatus, actualStatusLight) ;
     .at("now + 300 mseconds", {+!getStatusLight});
     .
 
 +!getCapacity <-
+    //?actualCapacity(Before);
+    //-actualCapacity(Before); tirado por problema de condição de corrida (mecanismo de exclusão mutua?)
     !readProperty("tag:storageRack", capacity, actualCapacity) ;
     .at("now + 10000 mseconds", {+!getCapacity});
     .
 
 +!getRobotXPosition <-
+    ?actualRobotXPosition(Before);
+    -actualRobotXPosition(Before);
     !readProperty("tag:storageRack", positionX, actualRobotXPosition) ;
     .at("now + 300 mseconds", {+!getRobotXPosition});
     .
 
 +!getRobotZPosition <-
+    ?actualRobotZPosition(Before);
+    -actualRobotZPosition(Before);
     !readProperty("tag:storageRack", positionZ, actualRobotZPosition) ;
     .at("now + 300 mseconds", {+!getRobotZPosition});
     .
 
 +!getRobotClampStatus <-
+    ?actualRobotClampStatus(Before);
+    -actualRobotClampStatus(Before);
     !readProperty("tag:storageRack", clampStatus, actualRobotClampStatus) ;
     .at("now + 300 mseconds", {+!getRobotClampStatus});
     .

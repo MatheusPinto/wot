@@ -7,6 +7,7 @@ actualPackageBufferNum(0).
 actualPackageSensorStatus("false").
 actualContainerSensor1Status("false").
 actualContainerSensor2Status("false").
+desirableConveyorSpeed(0.3).
 
 debugMode("on").
 
@@ -14,21 +15,25 @@ debugMode("on").
 
 +!start <-
     !getTD("http://simulator:8080/packagingWorkshop") ;
-    .at("now + 5 seconds", {+!getConveyorSpeed});
-    .at("now + 5 seconds", {+!getStatusLight});
-    .at("now + 5 seconds", {+!getConveyorHeadStatus});
-    .at("now + 5 seconds", {+!getPackageBufferNum});
-    .at("now + 5 seconds", {+!getPackageSensorStatus});
-    .at("now + 5 seconds", {+!getContainerSensor1Status});
-    .at("now + 5 seconds", {+!getContainerSensor2Status});
+    .at("now + 300 mseconds", {+!getConveyorSpeed});
+    .at("now + 300 mseconds", {+!getStatusLight});
+    .at("now + 300 mseconds", {+!getConveyorHeadStatus});
+    .at("now + 300 mseconds", {+!getPackageBufferNum});
+    .at("now + 300 mseconds", {+!getPackageSensorStatus});
+    .at("now + 300 mseconds", {+!getContainerSensor1Status});
+    .at("now + 300 mseconds", {+!getContainerSensor2Status});
     .
 
-// fazer uma operação de falha, caso não seja possivel pegar o TD
-//+!start <-
++cupsToProduce(CN) <- 
+    ?desirableConveyorSpeed(S);
+    !setConveyorSpeed(S) ;
+    .
 
 +!getConveyorSpeed <-
+    ?actualConveyorSpeed(Before);
+    -actualConveyorSpeed(Before);
     !readProperty("tag:packagingWorkshop", conveyorSpeed, actualConveyorSpeed) ;
-    .at("now + 1000 mseconds", {+!getConveyorSpeed});
+    .at("now + 300 mseconds", {+!getConveyorSpeed});
     .
 
 +!setConveyorSpeed(S) <-
@@ -36,33 +41,45 @@ debugMode("on").
     .
 
 +!getStatusLight <-
+    ?actualStatusLight(Before);
+    -actualStatusLight(Before);
     !readProperty("tag:packagingWorkshop", stackLightStatus, actualStatusLight) ;
-    .at("now + 1000 mseconds", {+!getStatusLight});
+    .at("now + 300 mseconds", {+!getStatusLight});
     .
 
 +!getConveyorHeadStatus <-
+    ?actualConveyorHeadStatus(Before);
+    -actualConveyorHeadStatus(Before);
     !readProperty("tag:packagingWorkshop", conveyorHeadStatus, actualConveyorHeadStatus) ;
-    .at("now + 1000 mseconds", {+!getConveyorHeadStatus});
+    .at("now + 300 mseconds", {+!getConveyorHeadStatus});
     .
 
 +!getPackageBufferNum <-
+    ?actualPackageBufferNum(Before);
+    -actualPackageBufferNum(Before);
     !readProperty("tag:packagingWorkshop", packageBuffer, actualPackageBufferNum) ;
     .at("now + 1000 mseconds", {+!getPackageBufferNum});
     .
 
 +!getPackageSensorStatus <-
+    ?actualPackageSensorStatus(Before);
+    -actualPackageSensorStatus(Before);
     !readProperty("tag:packagingWorkshop", opticalSensorPackage, actualPackageSensorStatus) ;
-    .at("now + 1000 mseconds", {+!getPackageSensorStatus});
+    .at("now + 300 mseconds", {+!getPackageSensorStatus});
     .
 
 +!getContainerSensor1Status <-
+    ?actualContainerSensor1Status(Before);
+    -actualContainerSensor1Status(Before);
     !readProperty("tag:packagingWorkshop", opticalSensorContainer1, actualContainerSensor1Status) ;
-    .at("now + 1000 mseconds", {+!getContainerSensor1Status});
+    .at("now + 300 mseconds", {+!getContainerSensor1Status});
     .
 
 +!getContainerSensor2Status <-
+    ?actualContainerSensor2Status(Before);
+    -actualContainerSensor2Status(Before);
     !readProperty("tag:packagingWorkshop", opticalSensorContainer2, actualContainerSensor2Status) ;
-    .at("now + 1000 mseconds", {+!getContainerSensor2Status});
+    .at("now + 300 mseconds", {+!getContainerSensor2Status});
     .
 
 +!pressEmergencyStop <-

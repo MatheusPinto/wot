@@ -15,20 +15,23 @@ debugMode("on").
     .at("now + 5 seconds", {+!getGraspingStatus});
     .
 
-// fazer uma operação de falha, caso não seja possivel pegar o TD
-//+!start <-
-
 +!getStatusLight <-
+    ?actualStatusLight(Before);
+    -actualStatusLight(Before);
     !readProperty("tag:robotArm", stackLightStatus, actualStatusLight) ;
     .at("now + 300 mseconds", {+!getStatusLight});
     .
 
 +!verifyIfIsInMovement <-
+    ?actualInMovement(Before);
+    -actualInMovement(Before);
     !readProperty("tag:robotArm", inMovement, actualInMovement) ;
     .at("now + 300 mseconds", {+!verifyIfIsInMovement})
     .
 
 +!getGraspingStatus <-
+    ?actualGrasping(Before);
+    -actualGrasping(Before);
     !readProperty("tag:robotArm", grasping, actualGrasping) ;
     .at("now + 300 mseconds", {+!getGraspingStatus});
     .
@@ -37,13 +40,12 @@ debugMode("on").
     !invokeAction("tag:robotArm", pressEmergencyStop);
     .
 
-// Lançado erro ao tentar chamar esse objetivo
+
 +!moveToPickCup <-  
     DEVOLVER = [kv("x", 2.2), kv("y", 0), kv("z", 1)];
     !invokeAction("tag:robotArm", moveTo, DEVOLVER) ;
     .
 
-// Lançado erro ao tentar chamar esse objetivo
 +!moveToPackageWorkshop <-
     DEVOLVER = [kv("x", 3.2), kv("y", 0), kv("z", 1)];
     !invokeAction("tag:robotArm", moveTo, DEVOLVER) ;
