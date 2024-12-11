@@ -5,18 +5,16 @@ mas itm_factory_mas {
         focus: itm_factory_workspace.h
     }
 
-/*   agent operator_robotArm {
+   agent operator_robotArm {
         beliefs: credentials("simu1", "simu1")
         focus: itm_factory_workspace.h
     }
-*/
-
-/*
+    
     agent operator_wksFiller {
         beliefs: credentials("simu1", "simu1")
         focus: itm_factory_workspace.h
     }
-*/
+
 /*    agent operator_packager {
         beliefs: credentials("simu1", "simu1")
         focus: itm_factory_workspace.h
@@ -29,12 +27,5 @@ mas itm_factory_mas {
 
     workspace itm_factory_workspace  {
         artifact h: org.hypermedea.HypermedeaArtifact()
-    }
-    
-    organisation aorg : factory-org.xml {
-        group agrp : factoryGroup {
-            players: factory_manager    factory_manager
-                     operator_storeRack operator
-        }
     }
 }

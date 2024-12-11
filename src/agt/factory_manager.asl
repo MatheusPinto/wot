@@ -7,7 +7,23 @@ debugMode("on").
 
 !start(5).
 
-// Na criação so esquema
++!start(CN) <-
+    .wait(5000);
+    !getTD("http://simulator:8080/dairyProductProvider") ;
+    !getTD("http://simulator:8080/cupProvider") ;
+    !getTD("http://simulator:8080/factory") ;
+
+    !resetFactory;
+    .wait(6000); // Espera tempo suficiente para a fabrica ser reiniciada
+    .broadcast(tell, cupsToProduce(CN));
+
+    //DESCOMENTAR
+    //.at("now + 200 mseconds", {+!getDeliveryBook});
+    //.at("now + 200 mseconds", {+!getShippingBook});
+    .
+
+
+/*
 +!start(CN)
    <- 
       .concat("sch_for_",CN,SchName);                 // Cria um nome para o esquema para CN copos
@@ -25,9 +41,9 @@ debugMode("on").
       // Note ainda que o objetivo startProduction foi inicializado antes do esquema ser inicializado,
       // porém seu termino será contabilizado como concluído quando o esquema continuar.
       commitMission(mfactory_manager)[artifact_id(SchArtId)]. 
+*/
 
-
-
+/*
 +!startProduction[scheme(Sch)] <-
     !getTD("http://simulator:8080/dairyProductProvider") ;
     !getTD("http://simulator:8080/cupProvider") ;
@@ -56,13 +72,10 @@ debugMode("on").
     //.at("now + 5 seconds", {+!getDeliveryBook});
     //.at("now + 5 seconds", {+!getShippingBook});
     .
+*/
 
 // fazer uma operação de falha, caso não seja possivel pegar o TD
 //+!start <-
-
-+!finishProduction[scheme(Sch)] <-
-    Sch::stop
-    .
 
 +!getDeliveryBook <-
     !readProperty("tag:factory", deliveryBook, actualDeliveryBook) ;
@@ -75,7 +88,7 @@ debugMode("on").
     .
 
 +!resetFactory <-
-    !invokeAction("tag:factory", reset) ;
+    !invokeAction("tag:factory", reset, []) ;
     .
 
 +!orderCups(N) <-
@@ -87,7 +100,7 @@ debugMode("on").
     .
 
 +!orderDairyProducts(N) <-
-    !invokeAction("tag:ProductProvider", order, N) ;
+    !invokeAction("tag:dairyProductProvider", order, N) ;
     .
 
 

@@ -2,13 +2,16 @@
 
 actualConveyorSpeed(0).
 actualStatusLight("yellow").
-actualConveyorHeadStatus([0,0]).
+actualConveyorHeadStatus(false).
 actualMagneticValveStatus("false").
 actualOpticalSensorStatus("false").
 actualTankLevel(0).
 actualTankXPosition(0).
+desirableConveyorSpeed(0.3).
+tankPositionError(0.3).
+tankEmptyLevelError(0.2).
 
-debugMode("off").
+debugMode("on").
 
 !start.
 
@@ -26,9 +29,30 @@ debugMode("off").
 // fazer uma operação de falha, caso não seja possivel pegar o TD
 //+!start <-
 
+
++cupsToProduce(CN) <- 
+    ?desirableConveyorSpeed(S);
+    !setConveyorSpeed(S) ;
+    !askForCup;
+    .
+
+
++!askForCup <-
+    //?actualTankXPosition(P);
+    //?tankPositionError(E);
+    //if (P > E) (.at("now + 300 mseconds", {+!askForCup});)
+    //else{}
+    .send(operator_storeRack, achieve, pickNextCup);
+    .
+
++!askForMoveCup <-
+    .send(operator_robotArm, achieve, moveCup);
+    //.print("Copo no final da esteira");
+    .
+
 +!getConveyorSpeed <-
     !readProperty("tag:fillingWorkshop", conveyorSpeed, actualConveyorSpeed) ;
-    .at("now + 1000 mseconds", {+!getConveyorSpeed});
+    .at("now + 300 mseconds", {+!getConveyorSpeed});
     .
 
 +!setConveyorSpeed(S) <-
@@ -36,33 +60,70 @@ debugMode("off").
     .
 
 +!getStatusLight <-
+    ?actualStatusLight(Before);
+    -actualStatusLight(Before);
     !readProperty("tag:fillingWorkshop", stackLightStatus, actualStatusLight) ;
-    .at("now + 1000 mseconds", {+!getStatusLight});
+    ?actualConveyorSpeed(S);
+    if(S == 0) {
+        ?actualStatusLight(L);
+        if (L == "green")
+        {
+            ?desirableConveyorSpeed(DS);
+            !setConveyorSpeed(DS);
+        }
+    }
+
+    .at("now + 300 mseconds", {+!getStatusLight});
     .
 
 +!getConveyorHeadStatus <-
+    ?actualConveyorHeadStatus(Before);
+    -actualConveyorHeadStatus(Before);
     !readProperty("tag:fillingWorkshop", conveyorHeadStatus, actualConveyorHeadStatus) ;
-    .at("now + 1000 mseconds", {+!getConveyorHeadStatus});
+    ?actualConveyorHeadStatus(Actual);
+    if(Before \== Actual) {
+        //.print("\n\n\n\n\n\n\nACTUAL <- ", Actual, " BEFORE <- ", Before, "\n\n\n\n\n\n\n\n\n");
+        !signalConveyorHeadStatusChange(Actual);
+    }
+    .at("now + 200 mseconds", {+!getConveyorHeadStatus});
+    .
+
++!signalConveyorHeadStatusChange(S) <-
+    if(S == true) {
+        !askForMoveCup;
+    }
+    else {
+        !askForCup
+    }
     .
 
 +!getMagneticValveStatus <-
+    ?actualMagneticValveStatus(Before);
+    -actualMagneticValveStatus(Before);
     !readProperty("tag:fillingWorkshop", magneticValveStatus, actualMagneticValveStatus) ;
-    .at("now + 1000 mseconds", {+!getMagneticValveStatus});
+    .at("now + 300 mseconds", {+!getMagneticValveStatus});
     .
 
 +!getOpticalSensorStatus <-
     !readProperty("tag:fillingWorkshop", opticalSensorStatus, actualOpticalSensorStatus) ;
-    .at("now + 1000 mseconds", {+!getOpticalSensorStatus});
+    .at("now + 300 mseconds", {+!getOpticalSensorStatus});
     .
 
 +!getTankLevel <-
+    ?actualTankLevel(Before);
+    -actualTankLevel(Before);
     !readProperty("tag:fillingWorkshop", tankLevel, actualTankLevel) ;
-    .at("now + 1000 mseconds", {+!getTankLevel});
+    ?actualTankLevel(Actual);
+    ?tankEmptyLevelError(E);
+    if (Actual < E) {
+        .send(factory_manager, achieve, orderDairyProducts(3)); // pede 3 litros de iougurte
+    }
+    .at("now + 300 mseconds", {+!getTankLevel});
     .
 
 +!getTankXPosition <-
     !readProperty("tag:fillingWorkshop", positionX, actualTankXPosition) ;
-    .at("now + 1000 mseconds", {+!getTankXPosition});
+    .at("now + 300 mseconds", {+!getTankXPosition});
     .
 
 +!pressEmergencyStop <-

@@ -20,17 +20,17 @@ debugMode("on").
 
 +!getStatusLight <-
     !readProperty("tag:robotArm", stackLightStatus, actualStatusLight) ;
-    .at("now + 1000 mseconds", {+!getStatusLight});
+    .at("now + 300 mseconds", {+!getStatusLight});
     .
 
 +!verifyIfIsInMovement <-
     !readProperty("tag:robotArm", inMovement, actualInMovement) ;
-    .at("now + 1000 mseconds", {+!verifyIfIsInMovement})
+    .at("now + 300 mseconds", {+!verifyIfIsInMovement})
     .
 
 +!getGraspingStatus <-
     !readProperty("tag:robotArm", grasping, actualGrasping) ;
-    .at("now + 1000 mseconds", {+!getGraspingStatus});
+    .at("now + 300 mseconds", {+!getGraspingStatus});
     .
 
 +!pressEmergencyStop <-
@@ -39,27 +39,37 @@ debugMode("on").
 
 // Lançado erro ao tentar chamar esse objetivo
 +!moveToPickCup <-  
-    //!invokeAction("tag:robotArm", moveTo, ""x":2,"y":0,"z":2") ;
-    //!invokeAction("tag:robotArm", moveTo, "x:2.2") ;
-    //!invokeAction("tag:robotArm", moveTo, "y:0") ;
-    //!invokeAction("tag:robotArm", moveTo, "z:1") ;
-    //!invokeAction("tag:robotArm", moveTo, [2.2, 0, 1]) ;
     DEVOLVER = [kv("x", 2.2), kv("y", 0), kv("z", 1)];
-
     !invokeAction("tag:robotArm", moveTo, DEVOLVER) ;
     .
 
 // Lançado erro ao tentar chamar esse objetivo
 +!moveToPackageWorkshop <-
-    !invokeAction("tag:robotArm", moveTo, [3.2, 0, 1]) ;
+    DEVOLVER = [kv("x", 3.2), kv("y", 0), kv("z", 1)];
+    !invokeAction("tag:robotArm", moveTo, DEVOLVER) ;
+    .
+
++!moveCup <-
+    !moveToPickCup;
+    !grasp;
+/*    ?actualGrasping(G);
+    // Verifica se item foi realmente pego (ou seja, tinha item para a garra pegar)
+    while(G \== true) {
+        .wait(300);
+        ?actualGrasping(G);
+        !grasp;
+    }
+    */
+    !moveToPackageWorkshop;
+    !release;
     .
 
 +!grasp <-
-    !invokeAction("tag:robotArm", grasp) ;
+    !invokeAction("tag:robotArm", grasp, []) ;
     .
 
 +!release <-
-    !invokeAction("tag:robotArm", release) ;
+    !invokeAction("tag:robotArm", release, []) ;
     .
 
 
