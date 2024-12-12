@@ -1,5 +1,10 @@
-//+json(Val)[source(URI)]  <- .print("new json ", Val, " for ",URI).
+/*
+    Autor : Matheus Leitzke Pinto
+    Data  : 12/12/2024 
+*/
 
+
+//+json(Val)[source(URI)]  <- .print("new json ", Val, " for ",URI).
 
 +!getTD(TD)
     <-
@@ -28,6 +33,8 @@
     //.print("URI=",URI," Fp=",Fp);
     get(URI, Fp) ;
     ?(json(Val)[source(URI)]) ;
+    //RemBel =.. [S,[_],[]];
+    //.abolish(RemBel); //para apagar a crença antiga, comentei devido a possibilidade de condição de corrida, embora seja interessante testar no futuro
     NewBel =.. [S, [Val], []];  // Construir predicado dinamicamente
     +NewBel;                    // Adicionar nova crença
     !debugPrint(P, Val) .

@@ -1,4 +1,8 @@
-//plantTDFound(false).
+/*
+    Autor : Matheus Leitzke Pinto
+    Data  : 12/12/2024 
+*/
+
 
 actualConveyorSpeed(0).
 actualStatusLight("yellow").
@@ -84,6 +88,7 @@ debugMode("off").
     .at("now + 300 mseconds", {+!getStatusLight});
     .
 
+// Possível solução para objetivo ser atomico => @{atomic}
 +!getCapacity <-
     //?actualCapacity(Before);
     //-actualCapacity(Before); tirado por problema de condição de corrida (mecanismo de exclusão mutua?)

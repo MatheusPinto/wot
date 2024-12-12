@@ -15,11 +15,11 @@ mas itm_factory_mas {
         focus: itm_factory_workspace.h
     }
 
-/*    agent operator_packager {
+    agent operator_packager {
         beliefs: credentials("simu1", "simu1")
         focus: itm_factory_workspace.h
     }
-*/
+
     agent factory_manager {
         beliefs: credentials("simu1", "simu1")
         focus: itm_factory_workspace.h

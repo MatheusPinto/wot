@@ -1,4 +1,8 @@
-//plantTDFound(false).
+/*
+    Autor : Matheus Leitzke Pinto
+    Data  : 12/12/2024 
+*/
+
 
 actualConveyorSpeed(0).
 actualStatusLight("yellow").

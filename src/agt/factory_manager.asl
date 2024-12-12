@@ -1,11 +1,15 @@
-//plantTDFound(false).
+/*
+    Autor : Matheus Leitzke Pinto
+    Data  : 12/12/2024 
+*/
+
 
 actualDeliveryBook([]).
 actualShippingBook([]).
 
 debugMode("on").
 
-!start(30).
+!start(3).
 
 +!start(CN) <-
     .wait(5000);
@@ -17,14 +21,13 @@ debugMode("on").
     .wait(6000); // Espera tempo suficiente para a fabrica ser reiniciada
     .broadcast(tell, cupsToProduce(CN));
 
-    //DESCOMENTAR
-    //.at("now + 200 mseconds", {+!getDeliveryBook});
-    //.at("now + 200 mseconds", {+!getShippingBook});
+    .at("now + 200 mseconds", {+!getDeliveryBook});
+    .at("now + 200 mseconds", {+!getShippingBook});
     .
 
 +rackIsEmpty(ER) <-
     if(ER == true) {
-        .send(operator_storeRack, ask, getCapacity);
+        //.send(operator_storeRack, ask, getCapacity);
         !orderCups(20);
         -rackIsEmpty(true);
     }

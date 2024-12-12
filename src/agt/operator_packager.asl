@@ -1,3 +1,9 @@
+/*
+    Autor : Matheus Leitzke Pinto
+    Data  : 12/12/2024 
+*/
+
+
 //plantTDFound(false).
 
 actualConveyorSpeed(0).
@@ -58,6 +64,10 @@ debugMode("on").
     ?actualPackageBufferNum(Before);
     -actualPackageBufferNum(Before);
     !readProperty("tag:packagingWorkshop", packageBuffer, actualPackageBufferNum) ;
+    ?actualPackageBufferNum(Actual);
+    if ( Actual == 0 ) {
+        .send(factory_manager, achieve, orderPackages(5));
+    }
     .at("now + 1000 mseconds", {+!getPackageBufferNum});
     .
 
